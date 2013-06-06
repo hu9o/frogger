@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>HTML5 Frogger</title>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=0.49, maximum-scale=0.49, user-scalable=no" />
+	
+	<style>
+		body { margin: auto; width: 650px; text-align: center; font-family: Arial; }
+		#gameStage { display: block; border: 4px solid #ff00ff; }
+        input[type=button] { color: black; background-color: #dedef7; border: 2px solid black; font-weight: bold; width: 64px; }
+	</style>
+	
+    <script src="js/utils.js"></script>
+    <script src="js/main.js"></script>
+
+</head>
+<body onload="">
+
+	<h1>HTML5 Frogger</h1>
+	
+	<canvas id="gameStage" width="640" height="448">Your browser doesn't support HTML canvas (too bad, you're so missing a great game !).</canvas>
+	
+	<input id="pauseBtn" type="button" value="start" />
+	<input id="restartBtn" type="button" value="restart" />
+	
+	<p id="tryit"><em>try it on a touch device</em></p>
+	
+
+	<br/>
+
+
+	<svg id="gamepad" width="240" height="240" viewBox="0,0,600,600" xmlns="http://www.w3.org/2000/svg" style="position: relative; left: 160px;">
+		<metadata id="metadata2391">image/svg+xml</metadata>
+		<g>
+			<g id="graphics">
+				<rect id="rect2398" width="200" height="600" x="200" y="0" ry="16.88312" fill=" rgb(0, 0, 0)"/>
+				<rect id="rect3180" width="200" height="600" x="200" y="-600" ry="16.88312" transform="matrix(0,1,-1,0,0,0) " fill=" rgb(0, 0, 0)"/>
+				<rect id="rect3182" width="160" height="560" x="220" y="-580" ry="16.88312" transform="matrix(0,1,-1,0,0,0) " fill=" rgb(255, 255, 255)"/>
+				<rect id="rect3170" width="160" height="560" x="220" y="20" ry="16.88312" fill=" rgb(255, 255, 255)"/>
+				<rect id="rect3547" width="20" height="140" x="290" y="50" ry="10"/>
+				<rect id="rect4058" width="20" height="140" x="290" y="410" ry="10"/>
+				<rect id="rect4060" width="20" height="140" x="290" y="-190" ry="10" transform="matrix(0,1,-1,0,0,0) "/>
+				<rect id="rect4062" width="20" height="140" x="290" y="-550" ry="10" transform="matrix(0,1,-1,0,0,0) "/>
+			</g>
+			<g id="buttons">
+				<rect class="left" opacity="0" fill="#ff0000" stroke="#000000" stroke-width="0" stroke-linejoin="null" stroke-linecap="null" x="2" y="202" width="197" height="197" id="svg_4"/>
+				<rect class="up" opacity="0" fill="#FF0000" stroke="#000000" stroke-width="0" stroke-linejoin="null" stroke-linecap="null" x="201.5" y="1.5" width="197" height="197" id="svg_6"/>
+				<rect class="right" opacity="0" fill="#FF0000" stroke="#000000" stroke-width="0" stroke-linejoin="null" stroke-linecap="null" x="401.5" y="201.5" width="197" height="197" id="svg_7"/>
+				<rect class="down" opacity="0" fill="#FF0000" stroke="#000000" stroke-width="0" stroke-linejoin="null" stroke-linecap="null" x="201.5" y="401.5" width="197" height="197" id="svg_8"/>
+			</g>
+		</g>
+	</svg>
+
+
+
+	<script type="text/javascript">
+		// Initialisation
+		
+		frogger.init(document.getElementById('gameStage'));
+        
+        
+		// Boutons
+        
+        document.getElementById("pauseBtn").addEventListener("click", frogger.pause);
+        document.getElementById('gameStage').addEventListener("click", frogger.pause);
+        document.getElementById("restartBtn").addEventListener("click", frogger.restart);
+        
+        frogger.onPauseChange = function(paused) {
+            document.getElementById("pauseBtn").value = paused ? "resume" : "pause";
+        };
+	
+    
+		// Touches
+		
+		var directions = ["left", "right", "up", "down"];
+		var keyCodes =   [37, 39, 38, 40];
+	
+		// touchscreen
+		if ('ontouchstart' in window)
+		{
+			document.querySelector("#tryit").parentNode.removeChild(document.querySelector("#tryit"));
+			
+			for (var i=0; i<directions.length; i++) {
+				document.querySelector("#gamepad #buttons rect."+directions[i]).addEventListener("touchstart", (function(callback){ return function(evt){
+                    callback();
+                    evt.preventDefault();
+                }; })(frogger.controller[directions[i]]));
+            }
+		}
+		// clavier
+		else
+		{
+			document.querySelector("#gamepad").parentNode.removeChild(document.querySelector("#gamepad"));
+			
+			function keypress(evt) {
+				if (keyCodes.indexOf(evt.keyCode) != -1)
+					frogger.controller[directions[keyCodes.indexOf(evt.keyCode)]]();
+				else if (evt.keyCode == 32)
+                    frogger.pause();
+                else
+                    return; // prevents preventDefault
+                
+                evt.preventDefault();
+			};
+            
+			addEventListener("keydown", keypress);
+		}
+	</script>
+		
+</body>
+</html>
